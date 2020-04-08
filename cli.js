@@ -19,6 +19,7 @@ var program = new commander.Command('lorem-ipsum-generator-generator')
   .option('-l, --logo [logo]')
   .option('-b, --background [background]')
   .option('-a, --accent [accent]')
+  .option('-r, --relativepath [path]')
   .parse(process.argv)
 
 var options = {
@@ -27,7 +28,8 @@ var options = {
   background: program.background,
   accent:     program.accent,
   urls:       program.args,
-  crawlPath:  "",
+  crawl:      true, 
+  crawlPath:  program.relativepath,
   crawlMax:   100
 }
 
@@ -42,6 +44,7 @@ async function run() {
   }
   if (options.crawl) {
     await crawl()
+    console.log(options.urls)
   }
   generate()
 }
@@ -77,7 +80,7 @@ async function ask() {
       type:    'confirm',
       name:    'crawl',
       message: 'Crawl source site for more URLs?',
-      default: false
+      default: true
     }
   ])
 
@@ -105,12 +108,12 @@ async function askUrls() {
         type:    'number',
         name:    'crawlMax',
         message: 'Maximum number of pages to crawl:',
-        default: 10
+        default: 100
       },
       {
         type:    'input',
         name:    'crawlPath',
-        message: 'Path on :',
+        message: 'Relative path on source site to stay within:',
         default: ''
       }
     ])
@@ -212,23 +215,30 @@ async function generate() {
 }
 
 async function crawl(){
+  console.log("Crawling for more URLs...")
   var urlIndex = 0
   var firstUrl = options.urls[0]
-  while (options.urls.length < options.crawlMax){
+  while (options.urls.length < options.crawlMax && urlIndex < options.urls.length){
     try {
       var response = await axios.get(options.urls[urlIndex])
       var $ = cheerio.load(response.data)
       $('a').each(function (i, a) {
         var href = a.attribs.href
-        if (href && 
-          !options.urls.includes(href) && 
+        if (href){
+          if (!href.startsWith("http")) {
+            href = url.resolve(firstUrl, href)
+          }
+          if (!options.urls.includes(href) && 
           href.startsWith(url.resolve(firstUrl, options.crawlPath)) && 
           options.urls.length < options.crawlMax){
+            // console.log(href)
             options.urls.push(href)
+          }
         } 
       })
     } catch (error) {
       console.error("Error fetching url " + firstUrl)
+      console.error(error)
     }
     urlIndex++;
   }
@@ -237,7 +247,13 @@ async function crawl(){
 async function fetchText(urls = []) {
   var contents = urls.map(async u => {
     var res = await Mercury.parse(u, {contentType: 'text'})
-    return res.content.trim()
+    if (res.content){
+      return res.content.trim()
+    } else {
+      console.log("Bad Mercury response content:" + res.content)
+      return ""
+    }
+
   })
 
   return Promise.all(contents).then(c => c.join(''))
