@@ -44,7 +44,6 @@ async function run() {
   }
   if (options.crawl) {
     await crawl()
-    console.log(options.urls)
   }
   generate()
 }
@@ -231,7 +230,6 @@ async function crawl(){
           if (!options.urls.includes(href) && 
           href.startsWith(url.resolve(firstUrl, options.crawlPath)) && 
           options.urls.length < options.crawlMax){
-            // console.log(href)
             options.urls.push(href)
           }
         } 
