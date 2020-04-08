@@ -31,6 +31,8 @@
   "homepage": "https://github.com/postlight/lorem-ipsum-generator-generator#readme",
   "dependencies": {
     "@postlight/mercury-parser": "^2.1.0",
+    "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
     "commander": "^2.19.0",
     "cross-spawn": "^6.0.5",
     "inquirer": "^6.2.2",
