@@ -1,7 +1,9 @@
 # Crawling Lorem Ipsum Generator Generator
 
 ## Crawling!
-This fork of the Lorem Ipsum Generator Generator adds webcrawling, to allow the Markov chain to be trained by the content of multiple pages from a target site. Usage is the same as the original generator, but you will be prompted for options about crawling. The original readme continues below:
+This fork of the Lorem Ipsum Generator Generator adds webcrawling, to allow the Markov chain to be trained by the content of multiple pages from a target site. Usage is the same as the original generator, but you will be prompted for options about crawling. It can be run from the command line after cloning this repo with `node cli.js`. 
+
+[Here](https://crawlspace.netlify.com/) is an example generated from crawling 100 articles from Myspace. The original readme continues below.
 
 ## Original Readme:
 [Postlight](https://postlight.com)'s Lorem Ipsum Generator Generator creates a lorem ipsum generator site from any content on the web using [Mercury Parser](https://mercury.postlight.com). Read all about it in [this handy introduction](https://postlight.com/trackchanges/introducing-postlights-lorem-ipsum-generator-generator).
